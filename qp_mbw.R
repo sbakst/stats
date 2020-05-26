@@ -32,6 +32,7 @@ loadpath = '~/Documents/research/data/QP/raw_qp_data/sub_bmps/'
 sob<-read.csv(paste(loadpath,s,'/sob_midpt_data.txt',sep=""))
 sew<-read.csv(paste(loadpath,s,'/sew_midpt_data.txt',sep=""))
 sea<-read.csv(paste(loadpath,s,'/sea_midpt_data.txt',sep=""))
+
 boss<-read.csv(paste(loadpath,s,'/boss_midpt_data.txt',sep=""))
 dose<-read.csv(paste(loadpath,s,'/dose_midpt_data.txt',sep=""))
 piece<-read.csv(paste(loadpath,s,'/piece_midpt_data.txt',sep=""))
@@ -41,6 +42,17 @@ sbw<-rbind(sbw,bindy)
 names(sbw)[names(sbw)=='framenum']<-'framenum_mbw'
 names(sbw)[names(sbw)=='normdiff']<-'normdiff_mbw'
 names(sbw)[names(sbw)=='normeddiff']<-'normeddiff_mbw'
+
+sartac<-read.csv('sartac_scale_zscore.csv')
+smbw<-merge(sartac,sbw,by='timestamp')
+smbw<-subset(smbw,smbw$normeddiff_mbw<1)
+smbw$subject<-as.factor(smbw$subject)
+
+
+smbw_word<-aggregate(normeddiff_mbw~subject+word,data=smbw,FUN="mean")
+smbw_mean<-aggregate(normeddiff_mbw~subject,data=smbw_word,FUN="mean")
+smbw_mean$alpha<-sstd$alphavect
+
 
 #############################################################
 
@@ -77,3 +89,12 @@ for (s in subs){
 names(rbw)[names(rbw)=='framenum']<-'framenum_mbw'
 names(rbw)[names(rbw)=='normdiff']<-'normdiff_mbw'
 names(rbw)[names(rbw)=='normeddiff']<-'normeddiff_mbw'
+
+rartac<-read.csv('rartac_scale_zscore.csv')
+rbw<-read.csv('rbw.csv')
+rmbw<-merge(rartac,rbw,by='timestamp')
+rmbw$subject<-as.factor(rmbw$subject)
+rmbw_word<-aggregate(normeddiff_mbw~subject+word,data=rmbw,FUN="mean")
+rmbw_mean<-aggregate(normeddiff_mbw~subject,data=rmbw_word,FUN="mean")
+rmbw_mean$alpha<-rstd$alphavect
+
